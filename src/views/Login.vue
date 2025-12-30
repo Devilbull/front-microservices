@@ -30,8 +30,13 @@ async function submit() {
         placeholder="Password"
     />
 
-    <button class="btn btn-primary w-100" @click="submit">
+    <button class="btn btn-primary w-100 mb-2" @click="submit">
       Login
     </button>
+
+    <!-- Link za forgot password -->
+    <div class="text-center">
+      <router-link to="/forgot-password">Forgot Password?</router-link>
+    </div>
   </div>
 </template>

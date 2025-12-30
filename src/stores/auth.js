@@ -23,8 +23,15 @@ export const useAuthStore = defineStore("auth", {
         },
 
         async login(credentials) {
-            await api.post("/auth/login", credentials);
-            await this.resolveAuth();
+            try {
+                await api.post("/auth/login", credentials);
+                await this.resolveAuth();
+            } catch (err) {
+                if (err.response) {
+                    console.log(err.response.data); // ovde će biti tvoj JSON
+                }
+            }
+
         },
 
         async logout() {
@@ -36,5 +43,20 @@ export const useAuthStore = defineStore("auth", {
             this.user = null;
             this.isAuthenticated = false;
         },
+        async forgotPassword(email) {
+            try {
+                await api.post("/auth/password-forget", { email });
+            } catch (err) {
+                throw err.response?.data?.message || "Something went wrong!";
+            }
+        },
+
+        async resetPassword(token, newPassword) {
+            try {
+                await api.post("/auth/password-reset", { token, newPassword });
+            } catch (err) {
+                throw err.response?.data?.message || "Something went wrong!";
+            }
+        }
     },
 });

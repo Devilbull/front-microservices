@@ -1,36 +1,81 @@
 <script setup>
 import { ref } from "vue";
-import api from "@/api/axios";
 import { useRouter } from "vue-router";
+import api from "@/api/axios";
 
 const router = useRouter();
 
-const username = ref("");
-const password = ref("");
+const form = ref({
+  username: "",
+  password: "",
+  email: "",
+  fullName: "",
+  dateOfBirth: ""
+});
 
-async function submit() {
-  await api.post("/auth/register", {
-    username: username.value,
-    password: password.value,
-  });
-  router.push("/login");
+const errorMessage = ref("");
+const successMessage = ref("");
+
+async function submitRegister() {
+  errorMessage.value = "";
+  successMessage.value = "";
+
+  try {
+    await api.post("/auth/register", form.value);
+    successMessage.value = "Registered ! Check email for activation link.";
+
+    // Nakon par sekundi redirect na login
+    setTimeout(() => {
+      router.push("/login");
+    }, 1500);
+  } catch (e) {
+    if (e.response && e.response.data) {
+      errorMessage.value = e.response.data.message || "Error occurred";
+    } else {
+      errorMessage.value = "Error occurred";
+    }
+  }
 }
 </script>
 
 <template>
-  <div class="container mt-5" style="max-width: 400px">
-    <h3 class="mb-3">Register</h3>
+  <div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 500px;">
+      <div class="card-body">
+        <h4 class="card-title mb-4">Register</h4>
 
-    <input class="form-control mb-2" v-model="username" placeholder="Username" />
-    <input
-        class="form-control mb-3"
-        type="password"
-        v-model="password"
-        placeholder="Password"
-    />
+        <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+        <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
 
-    <button class="btn btn-success w-100" @click="submit">
-      Register
-    </button>
+        <form @submit.prevent="submitRegister">
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" v-model="form.username" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" v-model="form.password" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" v-model="form.email" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" v-model="form.fullName" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" v-model="form.dateOfBirth" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Register</button>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
