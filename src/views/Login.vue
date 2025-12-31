@@ -8,18 +8,28 @@ const router = useRouter();
 
 const username = ref("");
 const password = ref("");
+const errorMessage = ref("");
 
 async function submit() {
-  await auth.login({
-    username: username.value,
-    password: password.value,
-  });
-  await router.push("/profile");
+  errorMessage.value = "";
+  try {
+    await auth.login({
+      username: username.value,
+      password: password.value,
+    });
+    await router.push("/profile");
+  } catch (err) {
+    errorMessage.value = err.message;
+  }
 }
 </script>
 
 <template>
   <div class="container mt-5" style="max-width: 400px">
+    <!-- Error message -->
+    <div v-if="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
     <h3 class="mb-3">Login</h3>
 
     <input class="form-control mb-2" v-model="username" placeholder="Username" />

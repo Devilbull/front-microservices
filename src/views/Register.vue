@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import api from "@/api/axios";
+import userApi from "@/api/axios";
 
 const router = useRouter();
 
@@ -21,7 +21,7 @@ async function submitRegister() {
   successMessage.value = "";
 
   try {
-    await api.post("/auth/register", form.value);
+    await userApi.post("/auth/register", form.value);
     successMessage.value = "Registered ! Check email for activation link.";
 
     // Nakon par sekundi redirect na login

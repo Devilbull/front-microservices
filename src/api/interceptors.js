@@ -1,8 +1,8 @@
-import api from "./axios";
+import userApi from "./axios";
 import { useAuthStore } from "@/stores/auth";
 
 export function setupInterceptors() {
-    api.interceptors.response.use(
+    userApi.interceptors.response.use(
         response => response,
         error => {
             if (error.response && error.response.status === 401) {

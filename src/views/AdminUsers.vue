@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import api from "@/api/axios";
+import userApi from "@/api/axios";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -12,6 +12,8 @@ const route = useRoute();
 if (!auth.isAdmin) {
   router.push("/");
 }
+
+const search = ref(route.query.username || "");
 
 // state
 const users = ref([]);
@@ -25,11 +27,12 @@ const openMenuId = ref(null);
 // fetch users
 async function loadUsers() {
   try {
-    const res = await api.get("/admin/users", {
+    const res = await userApi.get("/admin/users", {
       params: {
         page: page.value,
         size: size.value,
         sort: "username,asc",
+        username: search.value || undefined,
       },
     });
 
@@ -42,36 +45,74 @@ async function loadUsers() {
 
 // pagination
 function goToPage(p) {
-  if (p < 0 || p >= totalPages.value) return;
+  if (p < 0) return;
 
   page.value = p;
+  const query = {
+    page: p,
+    size: size.value,
+  };
+
+  if (search.value && search.value.trim() !== "") {
+    query.username = search.value.trim();
+  }
+
   router.push({
     path: "/admin/users",
-    query: { page: p, size: size.value },
+    query,
   });
 }
 
 // actions
 async function blockUser(id) {
-  await api.put(`/admin/users/${id}/block`);
+  await userApi.put(`/admin/users/${id}/block`);
   openMenuId.value = null;
   await loadUsers(); // refresh
 }
 
 async function unblockUser(id) {
-  await api.put(`/admin/users/${id}/unblock`);
+  await userApi.put(`/admin/users/${id}/unblock`);
   openMenuId.value = null;
   await loadUsers(); // refresh
 }
 
 // watch URL
-watch(() => route.query.page, loadUsers, { immediate: true });
+watch(
+    () => [route.query.page, route.query.username],
+    loadUsers,
+    { immediate: true }
+);
+
+watch(
+    () => route.query.username,
+    (newUsername) => {
+      search.value = newUsername || "";
+    }
+);
+
+watch(
+    () => search.value,
+    () => {
+      page.value = 0;
+    }
+);
 </script>
 
 <template>
   <div class="container mt-5">
     <h3 class="mb-3">Admin – Users</h3>
+    <div class="mb-3 d-flex gap-2" style="max-width: 420px;">
+      <input
+          class="form-control"
+          placeholder="Search by username..."
+          v-model="search"
+          @keyup.enter="goToPage(0)"
+      />
 
+      <button class="btn btn-primary" @click="goToPage(0)">
+        Search
+      </button>
+    </div>
     <table class="table table-striped table-hover align-middle">
       <thead>
       <tr>

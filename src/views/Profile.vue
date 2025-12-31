@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
-import api from "@/api/axios";
-
+import userApi from "@/api/axios";
+import { useRouter } from "vue-router";
 const auth = useAuthStore();
-
+const router = useRouter();  // <-- ovde
 // Dropdown control
 const showMenu = ref(false);
 
@@ -20,11 +20,12 @@ const changePassMessage = ref("");
 
 async function updateUser() {
   try {
-    const res = await api.put("/users/me", {
+    const res = await userApi.put("/users/me", {
       fullName: fullName.value,
       dateOfBirth: dateOfBirth.value
     });
     auth.user = res.data; // update store
+
     updateMessage.value = "Profile updated successfully!";
   } catch (err) {
     updateMessage.value = err.response?.data?.message || "Error updating profile";
@@ -33,12 +34,14 @@ async function updateUser() {
 
 async function changePassword() {
   try {
-    await api.patch("/users/me/password", {
+    await userApi.patch("/users/me/password", {
       oldPassword: oldPassword.value,
       newPassword: newPassword.value
     });
     changePassMessage.value = "Password changed successfully! You need to login again.";
-    auth.logoutLocal(); // logout user from store
+    // Logout lokalno i redirect
+    auth.logoutLocal();
+    await router.push("/login");  // <--- ovde ide redirect
   } catch (err) {
     changePassMessage.value = err.response?.data?.message || "Error changing password";
   }
@@ -56,13 +59,13 @@ async function changePassword() {
                 class="btn btn-secondary"
                 @click="showMenu = !showMenu"
             >
-              Actions &#x25BC;
+              Actions ▼
             </button>
 
             <transition name="fade">
               <div
                   v-if="showMenu"
-                  class="card position-absolute start-100 top-0 ms-2 p-3 shadow"
+                  class="card position-absolute top-100 mt-2 p-3 shadow"
                   style="width: 300px; z-index: 20;"
               >
                 <!-- Update profile -->
@@ -81,12 +84,6 @@ async function changePassword() {
                 <button class="btn btn-warning w-100 mb-2" @click="changePassword">Change Password</button>
                 <p class="text-success small" v-if="changePassMessage">{{ changePassMessage }}</p>
 
-                <hr />
-
-                <!-- Logout -->
-                <button class="btn btn-outline-danger w-100" @click="auth.logoutLocal(); showMenu = false;">
-                  Logout
-                </button>
               </div>
             </transition>
           </div>
