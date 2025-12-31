@@ -8,12 +8,21 @@ export const useAuthStore = defineStore("auth", {
         isAuthResolved: false,
     }),
 
+    getters: {
+        isAdmin: (state) => state.user?.role === "ADMIN",
+        isGamer: (state) => state.user?.role === "GAMER",
+    },
+
     actions: {
         async resolveAuth() {
             try {
                 const res = await api.get("/users/me");
                 this.user = res.data;
                 this.isAuthenticated = true;
+                if (this.user.status === "BLOCKED") {
+                    this.logoutLocal();
+                    return;
+                }
             } catch (e) {
                 this.user = null;
                 this.isAuthenticated = false;
