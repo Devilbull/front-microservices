@@ -51,27 +51,44 @@ async function changePassword() {
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h4 class="card-title">My Profile</h4>
-          <div class="position-relative">
-            <button class="btn btn-secondary" @click="showMenu = !showMenu">
-              Actions ▼
+          <div class="position-relative d-inline-block">
+            <button
+                class="btn btn-secondary"
+                @click="showMenu = !showMenu"
+            >
+              Actions &#x25BC;
             </button>
-            <div v-if="showMenu" class="card mt-2 p-3 position-absolute end-0" style="width: 300px; z-index: 10;">
-              <!-- Update user -->
-              <h5>Update Profile</h5>
-              <input class="form-control mb-2" v-model="fullName" placeholder="Full Name" />
-              <input type="date" class="form-control mb-2" v-model="dateOfBirth" placeholder="Date of Birth" />
-              <button class="btn btn-primary w-100 mb-2" @click="updateUser">Update</button>
-              <p class="text-success" v-if="updateMessage">{{ updateMessage }}</p>
 
-              <hr />
+            <transition name="fade">
+              <div
+                  v-if="showMenu"
+                  class="card position-absolute start-100 top-0 ms-2 p-3 shadow"
+                  style="width: 300px; z-index: 20;"
+              >
+                <!-- Update profile -->
+                <h6 class="fw-bold">Update Profile</h6>
+                <input class="form-control mb-2" v-model="fullName" placeholder="Full Name" />
+                <input type="date" class="form-control mb-2" v-model="dateOfBirth" />
+                <button class="btn btn-primary w-100 mb-2" @click="updateUser">Update</button>
+                <p class="text-success small" v-if="updateMessage">{{ updateMessage }}</p>
 
-              <!-- Change password -->
-              <h5>Change Password</h5>
-              <input type="password" class="form-control mb-2" v-model="oldPassword" placeholder="Old Password" />
-              <input type="password" class="form-control mb-2" v-model="newPassword" placeholder="New Password" />
-              <button class="btn btn-warning w-100" @click="changePassword">Change Password</button>
-              <p class="text-success" v-if="changePassMessage">{{ changePassMessage }}</p>
-            </div>
+                <hr />
+
+                <!-- Change password -->
+                <h6 class="fw-bold">Change Password</h6>
+                <input type="password" class="form-control mb-2" v-model="oldPassword" placeholder="Old Password" />
+                <input type="password" class="form-control mb-2" v-model="newPassword" placeholder="New Password" />
+                <button class="btn btn-warning w-100 mb-2" @click="changePassword">Change Password</button>
+                <p class="text-success small" v-if="changePassMessage">{{ changePassMessage }}</p>
+
+                <hr />
+
+                <!-- Logout -->
+                <button class="btn btn-outline-danger w-100" @click="auth.logoutLocal(); showMenu = false;">
+                  Logout
+                </button>
+              </div>
+            </transition>
           </div>
         </div>
 
