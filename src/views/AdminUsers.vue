@@ -160,33 +160,36 @@ watch(
 
         <!-- ACTIONS -->
         <td class="position-relative">
-          <button
-              class="btn btn-sm btn-outline-secondary"
-              @click="openMenuId = openMenuId === u.id ? null : u.id"
-          >
-            Actions ▼
-          </button>
-
-          <div
-              v-if="openMenuId === u.id"
-              class="card position-absolute mt-2 p-2"
-              style="z-index: 20; min-width: 140px;"
-          >
+          <!-- Samo ako korisnik NIJE admin -->
+          <div v-if="u.role !== 'ADMIN'">
             <button
-                class="btn btn-sm btn-danger mb-1"
-                @click="blockUser(u.id)"
-                :disabled="u.status === 'BLOCKED'"
+                class="btn btn-sm btn-outline-secondary"
+                @click="openMenuId = openMenuId === u.id ? null : u.id"
             >
-              Block
+              Actions ▼
             </button>
 
-            <button
-                class="btn btn-sm btn-success"
-                @click="unblockUser(u.id)"
-                :disabled="u.status === 'ACTIVE'"
+            <div
+                v-if="openMenuId === u.id"
+                class="card position-absolute mt-2 p-2"
+                style="z-index: 20; min-width: 140px;"
             >
-              Unblock
-            </button>
+              <button
+                  class="btn btn-sm btn-danger mb-1"
+                  @click="blockUser(u.id)"
+                  :disabled="u.status === 'BLOCKED'"
+              >
+                Block
+              </button>
+
+              <button
+                  class="btn btn-sm btn-success"
+                  @click="unblockUser(u.id)"
+                  :disabled="u.status === 'ACTIVE'"
+              >
+                Unblock
+              </button>
+            </div>
           </div>
         </td>
       </tr>
