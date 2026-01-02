@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import NotificationsView from "@/views/NotificationsView.vue";
 
 const routes = [
     {path: "/", redirect: "/profile"},
@@ -23,6 +24,18 @@ const routes = [
         path: "/admin/users",
         component: () => import("@/views/AdminUsers.vue"),
         meta: { requiresAuth: true, role: "ADMIN" },
+    },
+    {
+        path: "/admin/notifications",
+        name: "AdminNotifications",
+        component: () => import("@/views/AdminNotifications.vue"),
+        meta: { requiresAdmin: true }
+    },
+    {
+        path: "/notifications",
+        name: "Notifications",
+        component: NotificationsView,
+        meta: { requiresAuth: true },
     },
 ];
 

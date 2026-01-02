@@ -28,6 +28,11 @@ function logout() {
         <li v-if="auth.isAuthenticated" class="nav-item">
           <router-link class="nav-link" to="/profile">My Profile</router-link>
         </li>
+        <li v-if="auth.isAuthenticated" class="nav-item">
+          <router-link class="nav-link" to="/notifications">
+            Notifications
+          </router-link>
+        </li>
 
         <!-- ADMIN DROPDOWN -->
         <li
@@ -50,6 +55,11 @@ function logout() {
                   :to="{ path: '/admin/users', query: { page: 0, size: 5 } }"
               >
                 Users
+              </router-link>
+            </li>
+            <li>
+              <router-link class="dropdown-item" :to="{ path: '/admin/notifications', query: { page: 0, size: 5 } }">
+                Notifications
               </router-link>
             </li>
           </ul>
