@@ -37,28 +37,34 @@ watch(page, fetchNotifications);
 
 // computed za smart pagination
 const pagesToShow = computed(() => {
-  const current = page.value + 1; // radi lakšeg računanja
+  const current = page.value + 1; // 1-based
   const pages = [];
 
-  // uvek dodaj prvu stranu
-  if (current > 4) pages.push(1);
+  if (totalPages.value === 0) return pages;
 
-  // "..." levo ako treba
-  if (current > 5) pages.push("...");
+  // uvek prva strana
+  pages.push(1);
 
-  // tri strane pre i posle trenutne
+  // "..." levo ako je potrebno
+  if (current > 4) pages.push("...");
+
+  // stranice oko trenutne: current-2, current-1, current, current+1, current+2
   for (let i = current - 2; i <= current + 2; i++) {
-    if (i > 0 && i <= totalPages.value) pages.push(i);
+    if (i > 1 && i < totalPages.value) {
+      pages.push(i);
+    }
   }
 
-  // "..." desno ako treba
+  // "..." desno ako je potrebno
   if (current + 2 < totalPages.value - 1) pages.push("...");
 
-  // poslednja strana
-  if (current + 2 < totalPages.value) pages.push(totalPages.value);
+  // poslednja strana, ako nije već dodana
+  if (totalPages.value > 1) pages.push(totalPages.value);
 
   return pages;
 });
+
+
 </script>
 
 <template>

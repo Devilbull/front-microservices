@@ -12,3 +12,9 @@ export const notifApi = axios.create({
     baseURL: "http://localhost:8080/api/notificationservice",
     withCredentials: true,
 });
+
+
+export const gameApi = axios.create({
+    baseURL: "http://localhost:8080/api/gamingservice",
+    withCredentials: true,
+});

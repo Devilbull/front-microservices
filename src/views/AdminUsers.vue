@@ -96,6 +96,37 @@ watch(
       page.value = 0;
     }
 );
+
+import { computed } from "vue";
+
+const pagesToShow = computed(() => {
+  const current = page.value + 1; // 1-based
+  const pages = [];
+
+  if (totalPages.value === 0) return pages;
+
+  // uvek prva strana
+  pages.push(1);
+
+  // "..." levo ako je potrebno
+  if (current > 4) pages.push("...");
+
+  // stranice oko trenutne: current-2, current-1, current, current+1, current+2
+  for (let i = current - 2; i <= current + 2; i++) {
+    if (i > 1 && i < totalPages.value) {
+      pages.push(i);
+    }
+  }
+
+  // "..." desno ako je potrebno
+  if (current + 2 < totalPages.value - 1) pages.push("...");
+
+  // poslednja strana, ako nije već dodana
+  if (totalPages.value > 1) pages.push(totalPages.value);
+
+  return pages;
+});
+
 </script>
 
 <template>
@@ -206,14 +237,19 @@ watch(
         </li>
 
         <li
-            v-for="p in totalPages"
+            v-for="p in pagesToShow"
             :key="p"
             class="page-item"
-            :class="{ active: p - 1 === page }"
+            :class="{ active: page + 1 === p, disabled: p === '...' }"
         >
-          <button class="page-link" @click="goToPage(p - 1)">
+          <button
+              v-if="p !== '...'"
+              class="page-link"
+              @click="goToPage(p - 1)"
+          >
             {{ p }}
           </button>
+          <span v-else class="page-link">...</span>
         </li>
 
         <li class="page-item" :class="{ disabled: page === totalPages - 1 }">

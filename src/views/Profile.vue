@@ -90,7 +90,6 @@ async function changePassword() {
         </div>
 
         <div v-if="auth.user">
-          <p><strong>ID:</strong> {{ auth.user.id }}</p>
           <p><strong>Username:</strong> {{ auth.user.username }}</p>
           <p><strong>Full Name:</strong> {{ auth.user.fullName }}</p>
           <p><strong>Email:</strong> {{ auth.user.email }}</p>
