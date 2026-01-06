@@ -26,7 +26,7 @@ function logout() {
         </li>
 
         <li v-if="auth.isAuthenticated" class="nav-item">
-          <router-link class="nav-link" to="/profile">My Profile</router-link>
+          <router-link class="nav-link" to="/profile">MyProfile</router-link>
         </li>
         <li v-if="auth.isAuthenticated" class="nav-item">
           <router-link class="nav-link" to="/notifications">
@@ -36,6 +36,11 @@ function logout() {
         <li v-if="auth.isAuthenticated" class="nav-item">
           <router-link class="nav-link" to="/games">
             Games
+          </router-link>
+        </li>
+        <li v-if="auth.isAuthenticated" class="nav-item">
+          <router-link class="nav-link" to="/users">
+            AllUsers
           </router-link>
         </li>
 
@@ -54,14 +59,7 @@ function logout() {
             Admin
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <router-link
-                  class="dropdown-item"
-                  :to="{ path: '/admin/users', query: { page: 0, size: 5 } }"
-              >
-                AllUsers
-              </router-link>
-            </li>
+
             <li>
               <router-link class="dropdown-item" :to="{ path: '/admin/notifications', query: { page: 0 } }">
                 AllNotifications

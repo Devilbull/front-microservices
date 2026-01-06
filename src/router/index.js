@@ -21,9 +21,9 @@ const routes = [
         component: () => import("@/views/NotFound.vue"),
     },
     {
-        path: "/admin/users",
-        component: () => import("@/views/AdminUsers.vue"),
-        meta: { requiresAuth: true, role: "ADMIN" },
+        path: "/users",
+        component: () => import("@/views/AllUsers.vue"),
+        meta: { requiresAuth: true },
     },
     {
         path: "/admin/notifications",
