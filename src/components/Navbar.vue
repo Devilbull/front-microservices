@@ -39,6 +39,18 @@ function logout() {
           </router-link>
         </li>
         <li v-if="auth.isAuthenticated" class="nav-item">
+          <router-link class="nav-link" to="/sessions">
+            Sessions
+          </router-link>
+        </li>
+
+        <li v-if="auth.isAuthenticated" class="nav-item">
+          <router-link class="nav-link" to="/sessions/create">
+            CreateSession
+          </router-link>
+        </li>
+
+        <li v-if="auth.isAuthenticated" class="nav-item">
           <router-link class="nav-link" to="/users">
             AllUsers
           </router-link>

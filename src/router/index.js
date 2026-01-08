@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import NotificationsView from "@/views/NotificationsView.vue";
+import SessionsView from "@/views/SessionsView.vue";
+import CreateSessionView from "@/views/CreateSessionView.vue";
 
 const routes = [
     {path: "/", redirect: "/profile"},
@@ -42,6 +44,16 @@ const routes = [
         component: () => import("@/views/GamesView.vue"),
         meta: {requiresAuth: true},
     },
+    {
+        path: "/sessions",
+        component: SessionsView,
+        meta: {requiresAuth: true},
+    },
+    {
+        path: "/sessions/create",
+        component: CreateSessionView,
+        meta: {requiresAuth: true},
+    }
 ];
 
 const router = createRouter({
