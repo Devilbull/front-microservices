@@ -22,6 +22,30 @@ const page = ref(Number(route.query.page) || 0);
 const size = ref(Number(route.query.size) || 5);
 const totalPages = ref(0);
 
+
+const hasMySessions = ref(false)
+async function checkIfHasMySessions() {
+  try {
+    const res = await gameApi.get("/sessions/my", {
+      params: {
+        page: 0,
+        size: 1
+      },
+      withCredentials: true
+    })
+    hasMySessions.value = res.data.totalElements > 0
+  } catch (e) {
+    hasMySessions.value = false
+  }
+}
+
+import { onMounted } from "vue";
+
+onMounted(() => {
+  checkIfHasMySessions()
+})
+
+
 // dropdown state (po user ID)
 const openMenuId = ref(null);
 
@@ -223,8 +247,17 @@ const pagesToShow = computed(() => {
           </div>
 
           <!-- OWNER invite action -->
-          <div v-else-if="!auth.isAdmin && u.role !== 'ADMIN' && u.id !== auth.user.id && u.status === 'ACTIVE'">
-            <button class="btn btn-sm btn-outline-primary" @click="openInviteModal(u)">Invite ▼</button>
+          <div
+              v-else-if="
+                !auth.isAdmin &&
+                hasMySessions &&
+                u.role !== 'ADMIN' &&
+                u.id !== auth.user.id &&
+                u.status === 'ACTIVE'
+              "
+          >
+
+          <button class="btn btn-sm btn-outline-primary" @click="openInviteModal(u)">Invite ▼</button>
           </div>
         </td>
       </tr>

@@ -85,8 +85,7 @@ async function createSession() {
     await gameApi.post("/sessions/create-session", {
       ...form.value,
       startOfSession: form.value.startOfSession
-          ? new Date(form.value.startOfSession).toISOString()
-          : null
+
     })
     alert("Session created successfully 🎮")
     // reset forme
