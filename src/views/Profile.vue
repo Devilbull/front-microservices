@@ -47,72 +47,127 @@ async function changePassword() {
   }
 }
 </script>
-
 <template>
-  <div class="container mt-5">
-    <div class="card mx-auto" style="max-width: 600px;">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h4 class="card-title">My Profile</h4>
-          <div class="position-relative d-inline-block">
-            <button
-                class="btn btn-secondary"
-                @click="showMenu = !showMenu"
-            >
-              Actions ▼
+  <div class="container py-5">
+    <div v-if="auth.user" class="row g-4">
+
+      <!-- LEFT: Profile card -->
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body text-center">
+            <!-- Avatar -->
+            <div class="rounded-circle bg-primary text-white d-flex
+                        align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 90px; height: 90px; font-size: 32px;">
+              {{ auth.user.username[0].toUpperCase() }}
+            </div>
+
+            <h5 class="mb-1">{{ auth.user.username }}</h5>
+            <span class="badge bg-secondary mb-2">{{ auth.user.role }}</span>
+
+            <!-- Rang / organizer title -->
+            <div v-if="auth.user.gamerStats?.organizerTitle" class="mb-2">
+              <span class="badge bg-success">{{ auth.user.gamerStats.organizerTitle }}</span>
+            </div>
+
+            <hr>
+
+            <div class="text-start small">
+              <p><strong>Full name:</strong> {{ auth.user.fullName }}</p>
+              <p><strong>Email:</strong> {{ auth.user.email }}</p>
+              <p><strong>Date of birth:</strong> {{ auth.user.dateOfBirth }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Actions -->
+      <div class="col-md-8">
+        <!-- Gamer stats -->
+        <div v-if="auth.user.gamerStats">
+          <h6 class="fw-bold mb-3 text-center">Gamer Stats</h6>
+
+          <div class="row g-3">
+            <div class="col-md-3">
+              <div class="card text-center shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                  <h4>{{ auth.user.gamerStats.totalSessions }}</h4>
+                  <small class="text-muted">Total Sessions</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="card text-center shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                  <h4>{{ auth.user.gamerStats.attendanceNumber }}%</h4>
+                  <small class="text-muted">Attendance</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="card text-center shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                  <h4>{{ auth.user.gamerStats.numberOfSuccessfulSessions }}</h4>
+                  <small class="text-muted">Organized</small>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="auth.user.gamerStats.organizerTitle" class="col-md-3">
+              <div class="card text-center shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                  <h6 class="mb-0">{{ auth.user.gamerStats.organizerTitle }}</h6>
+                  <small class="text-muted">Rank</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+          <div class="card-body">
+            <h6 class="fw-bold mb-3">Update Profile</h6>
+
+            <div class="row g-2">
+              <div class="col-md-6">
+                <input class="form-control" v-model="fullName" placeholder="Full name">
+              </div>
+              <div class="col-md-6">
+                <input type="date" class="form-control" v-model="dateOfBirth">
+              </div>
+            </div>
+
+            <button class="btn btn-primary mt-3" @click="updateUser">
+              Save changes
             </button>
 
-            <transition name="fade">
-              <div
-                  v-if="showMenu"
-                  class="card position-absolute top-100 mt-2 p-3 shadow"
-                  style="width: 300px; z-index: 20;"
-              >
-                <!-- Update profile -->
-                <h6 class="fw-bold">Update Profile</h6>
-                <input class="form-control mb-2" v-model="fullName" placeholder="Full Name" />
-                <input type="date" class="form-control mb-2" v-model="dateOfBirth" />
-                <button class="btn btn-primary w-100 mb-2" @click="updateUser">Update</button>
-                <p class="text-success small" v-if="updateMessage">{{ updateMessage }}</p>
-
-                <hr />
-
-                <!-- Change password -->
-                <h6 class="fw-bold">Change Password</h6>
-                <input type="password" class="form-control mb-2" v-model="oldPassword" placeholder="Old Password" />
-                <input type="password" class="form-control mb-2" v-model="newPassword" placeholder="New Password" />
-                <button class="btn btn-warning w-100 mb-2" @click="changePassword">Change Password</button>
-                <p class="text-success small" v-if="changePassMessage">{{ changePassMessage }}</p>
-
-              </div>
-            </transition>
+            <p class="text-success small mt-2" v-if="updateMessage">{{ updateMessage }}</p>
           </div>
         </div>
 
-        <div v-if="auth.user">
-          <p><strong>Username:</strong> {{ auth.user.username }}</p>
-          <p><strong>Full Name:</strong> {{ auth.user.fullName }}</p>
-          <p><strong>Email:</strong> {{ auth.user.email }}</p>
-          <p><strong>Date of Birth:</strong> {{ auth.user.dateOfBirth }}</p>
-          <p><strong>Role:</strong> {{ auth.user.role }}</p>
-          <p><strong>Status:</strong> {{ auth.user.status }}</p>
+        <!-- Change password -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+          <div class="card-body">
+            <h6 class="fw-bold mb-3">Change Password</h6>
 
-          <div v-if="auth.user.gamerStats">
-            <h5 class="mt-3">Gamer Stats:</h5>
-            <p><strong>Total Sessions:</strong> {{ auth.user.gamerStats.totalSessions }}</p>
-            <p><strong>Joined Sessions:</strong> {{ auth.user.gamerStats.numberOfJoinedSessions }}</p>
-            <p><strong>Leaving Sessions:</strong> {{ auth.user.gamerStats.numberOfLeavingSessions }}</p>
-            <p><strong>Attendance:</strong> {{ auth.user.gamerStats.attendanceNumber }}%</p>
-            <p><strong>Successful Sessions:</strong> {{ auth.user.gamerStats.numberOfSuccessfulSessions }}</p>
-            <p><strong>Organizer Title:</strong> {{ auth.user.gamerStats.organizerTitle }}</p>
+            <input type="password" class="form-control mb-2" v-model="oldPassword" placeholder="Old password" />
+            <input type="password" class="form-control mb-2" v-model="newPassword" placeholder="New password" />
+
+            <button class="btn btn-warning" @click="changePassword">
+              Change password
+            </button>
+
+            <p class="text-success small mt-2" v-if="changePassMessage">{{ changePassMessage }}</p>
           </div>
         </div>
 
-        <div v-else>
-          <p>No user data available.</p>
-        </div>
+
+
       </div>
     </div>
   </div>
 </template>
+
+
 

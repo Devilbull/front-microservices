@@ -125,7 +125,7 @@ async function cancelSession(id) {
 async function lockSession(id) {
   try {
     const emails = (lockEmails.value[id] || "")
-        .split(",")
+        .split(/[\s,]+/)
         .map(e => e.trim())
         .filter(Boolean);
 
@@ -134,12 +134,19 @@ async function lockSession(id) {
       emails
     });
 
-    openMenuId.value = null;
+    // ✅ zatvori modal
     showLockInputFor.value = null;
-    lockEmails.value[id] = "";
+
+    // ✅ očisti podatke
+    delete lockEmails.value[id];
+
+    openMenuId.value = null;
+
     loadSessions();
 
   } catch (err) {
+    // ✅ zatvori modal
+    showLockInputFor.value = null;
     const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
@@ -336,21 +343,11 @@ watch(() => route.query, loadSessions, { immediate: true });
                    class="card position-absolute mt-2 p-2"
                    style="z-index: 9999; min-width: 220px; white-space: nowrap;">
 
-                <div v-if="canLock(s)">
-                  <button class="btn btn-sm btn-warning mb-2"
-                          @click="showLockInputFor = s.sessionId">
-                    Lock
-                  </button>
-                  <div v-if="showLockInputFor === s.sessionId" class="mb-2">
-                    <input class="form-control form-control-sm mb-1"
-                           placeholder="email1@test.com, email2@test.com"
-                           v-model="lockEmails[s.sessionId]" />
-                    <button class="btn btn-sm btn-success w-100"
-                            @click="lockSession(s.sessionId)">
-                      Confirm Lock
-                    </button>
-                  </div>
-                </div>
+                <button v-if="canLock(s)"
+                        class="btn btn-sm btn-warning mb-2"
+                        @click="showLockInputFor = s.sessionId; openMenuId = null">
+                  Lock
+                </button>
 
                 <button v-if="canCancel(s)" class="btn btn-sm btn-danger w-100"
                         @click="cancelSession(s.sessionId)">
@@ -412,4 +409,52 @@ watch(() => route.query, loadSessions, { immediate: true });
       </ul>
     </nav>
   </div>
+
+  <!-- LOCK MODAL -->
+  <div v-if="showLockInputFor" class="modal-backdrop-custom">
+    <div class="modal-card">
+      <h5 class="mb-2">Lock Session</h5>
+
+      <textarea
+          class="form-control mb-3"
+          rows="10"
+          placeholder="Enter emails (comma, space or new line separated)"
+          v-model="lockEmails[showLockInputFor]"
+      ></textarea>
+
+      <div class="d-flex gap-2 justify-content-end">
+        <button class="btn btn-secondary"
+                @click="showLockInputFor = null">
+          Cancel
+        </button>
+
+        <button class="btn btn-success"
+                @click="lockSession(showLockInputFor)">
+          Confirm Lock
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
+
+
+<style scoped>
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+</style>
