@@ -94,6 +94,9 @@ async function createSession() {
     alert(e.response?.data?.message || "Failed to create session")
   }
 }
+const now = new Date()
+
+const minDateTime = now.toISOString().slice(0, 16)
 
 // ==========================
 // ON MOUNT
@@ -153,8 +156,13 @@ onMounted(async () => {
 
       <div class="mb-3">
         <label class="form-label">Start Time</label>
-        <input type="datetime-local" v-model="form.startOfSession" class="form-control" required />
-      </div>
+        <input
+            type="datetime-local"
+            v-model="form.startOfSession"
+            :min="minDateTime"
+            class="form-control"
+            required
+        />      </div>
 
       <div class="mb-3">
         <label class="form-label">Description</label>
