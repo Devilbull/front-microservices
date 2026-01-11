@@ -17,6 +17,7 @@ const updateMessage = ref("");
 const oldPassword = ref("");
 const newPassword = ref("");
 const changePassMessage = ref("");
+const today = new Date().toISOString().split("T")[0];
 
 async function updateUser() {
   try {
@@ -134,7 +135,7 @@ async function changePassword() {
                 <input class="form-control" v-model="fullName" placeholder="Full name">
               </div>
               <div class="col-md-6">
-                <input type="date" class="form-control" v-model="dateOfBirth">
+                <input type="date" class="form-control" v-model="dateOfBirth" :max="today">
               </div>
             </div>
 
