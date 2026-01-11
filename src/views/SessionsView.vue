@@ -312,9 +312,9 @@ watch(() => route.query, loadSessions, { immediate: true });
           </span>
           </td>
           <td>
-          <span :class="['badge', auth.user?.id === s.creatorId ? 'bg-primary' : 'bg-secondary']">
-            {{ auth.user?.id === s.creatorId ? "Me" : "Other" }}
-          </span>
+  <span :class="['badge', auth.user?.id === s.creatorId ? 'bg-primary' : 'bg-secondary']">
+    {{ auth.user?.id === s.creatorId ? 'Me' : s.ownerUsername }}
+  </span>
           </td>
           <td>{{ s.currentPlayers }}/{{ s.maxPlayers }}</td>
           <td>
