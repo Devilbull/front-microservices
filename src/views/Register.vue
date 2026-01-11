@@ -12,6 +12,7 @@ const form = ref({
   fullName: "",
   dateOfBirth: ""
 });
+const today = new Date().toISOString().split("T")[0];
 
 const errorMessage = ref("");
 const successMessage = ref("");
@@ -70,7 +71,13 @@ async function submitRegister() {
 
           <div class="mb-3">
             <label class="form-label">Date of Birth</label>
-            <input type="date" class="form-control" v-model="form.dateOfBirth" required />
+            <input
+                type="date"
+                class="form-control"
+                v-model="form.dateOfBirth"
+                :max="today"
+                required
+            />
           </div>
 
           <button type="submit" class="btn btn-primary w-100">Register</button>

@@ -298,8 +298,8 @@ const pagesToShow = computed(() => {
             </tr>
             </thead>
             <tbody>
-            <tr v-for="s in mySessions" :key="s.sessionId">
-              <td>{{ s.sessionName }}</td>
+            <tr v-for="s in mySessions.filter(s => s.sessionStatus === 'SCHEDULED')" :key="s.sessionId">
+            <td>{{ s.sessionName }}</td>
               <td>{{ s.gameName }}</td>
               <td>{{ new Date(s.startTime).toLocaleString() }}</td>
               <td>
